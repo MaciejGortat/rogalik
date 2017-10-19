@@ -89,6 +89,8 @@ int main() {
 	refresh(map);
 	char** mapCopy = mapCpy(map);
 	//system("PAUSE>nul");
+	gotoxy(me.x, me.y);
+	printf("%c", map[me.x][me.y] = '@');
 	for (short action; action != 'q'; action = _getch()) {
 		switch (action) {
 			case ('w'): {
@@ -136,6 +138,8 @@ int main() {
 				mapCopy = mapCpy(map);
 				me.x = 1;
 				me.y = 1;
+				gotoxy(me.x, me.y);
+				printf("%c", map[me.x][me.y] = '@');
 				break;
 			}
 		}
