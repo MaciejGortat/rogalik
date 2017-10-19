@@ -48,89 +48,105 @@ void refresh(char** map) {
 
 void makeSomeObstacles(char** map) {
 	srand(time(NULL));
-	char** bul = (char**)malloc(sizeof(char*) * 64);
-	for (char i = 0; i < 64; ++i) {
-		*(map + i) = (char*)malloc(sizeof(char) * 32);
-		memset(*(map + i), 0, 32 * sizeof(char));
-	}
-	int amount = (rand() % 4) + 3;
+	int amount = (rand() % 7) + 7;
+	int tempx;
+	int tempy;
+	int test = 0;
 	int* obstaclesSizes = (int*)malloc(amount * sizeof(int));
 	for (int i = 0; i < amount; ++i) {
-		obstaclesSizes = (rand() % 3) + 3;
+		obstaclesSizes[i] = (rand() % 3) + 3 + i;
+		tempx = (rand() % 42) + (rand() % 10);
+		tempy = (rand() % 21) + (rand() % 10);
+		//printf("Am: %d OS: %d : %d %d\n", amount, obstaclesSizes[i], tempx, tempy);
+		for (int j = tempx; j < tempx + obstaclesSizes[i]; ++j) {
+			for (int k = tempy; k < tempy + obstaclesSizes[i]; ++k) {
+				map[j][k] = '#';
+				//printf("%d\n", ++test);
+			}
+		}
 	}
-	for (int i = 0; i < amount; ++i) {
-		
-	}
-	map[(rand() % 10) + 3][(rand() % 10) + 3] = 
+	free(obstaclesSizes);
+}
 
+char** mapCpy(char** source) {
+	char** map = (char**)malloc(sizeof(char*) * 64);
+	for (int i = 0; i < 64; ++i) {
+		*(map + i) = (char*)malloc(sizeof(char) * 32);
+		memcpy(*(map + i), *(source + i), 32);
+	}
+	return map;
 }
 
 int main() {
 	system("cls");
-	char** map = createMap();
 	hero me;
 	me.x = 1;
 	me.y = 1;
+	char** map = createMap();
+	for (int i = 0; i < 3; ++i) {
+		makeSomeObstacles(map);	
+	}
+	refresh(map);
+	char** mapCopy = mapCpy(map);
+	//system("PAUSE>nul");
 	for (short action; action != 'q'; action = _getch()) {
 		switch (action) {
 			case ('w'): {
-				if (me.y > 1) {
+				if (map[me.x][me.y - 1] != '#') {
 					gotoxy(me.x, me.y);
-					printf("%c", map[me.x][me.y] = 241);
+					printf("%c", map[me.x][me.y] = mapCopy[me.x][me.y]);
 					gotoxy(me.x, --me.y);
 					printf("%c", map[me.x][me.y] = '@');
 				}
 				break;
 			}
 			case ('a'): {
-				if (me.x > 1) {
+				if (map[me.x - 1][me.y] != '#') {
 					gotoxy(me.x, me.y);
-					printf("%c", map[me.x][me.y] = 241);
+					printf("%c", map[me.x][me.y] = mapCopy[me.x][me.y]);
 					gotoxy(--me.x, me.y);
 					printf("%c", map[me.x][me.y] = '@');
 				}
 				break;
 			}
 			case ('d'): {
-				if (me.x < 62) {
+				if (map[me.x + 1][me.y] != '#') {
 					gotoxy(me.x, me.y);
-					printf("%c", map[me.x][me.y] = 241);
+					printf("%c", map[me.x][me.y] = mapCopy[me.x][me.y]);
 					gotoxy(++me.x, me.y);
 					printf("%c", map[me.x][me.y] = '@');
 				}
 				break;
 			}
 			case ('s'): {
-				if (me.y < 30) {
+				if (map[me.x][me.y + 1] != '#') {
 					gotoxy(me.x, me.y);
-					printf("%c", map[me.x][me.y] = 241);
+					printf("%c", map[me.x][me.y] = mapCopy[me.x][me.y]);
 					gotoxy(me.x, ++me.y);
 					printf("%c", map[me.x][me.y] = '@');
 				}
 				break;
 			}
+			case ('r'): {
+				map = createMap();
+				for (int i = 0; i < 3; ++i) {
+					makeSomeObstacles(map);	
+				}
+				refresh(map);
+				mapCopy = mapCpy(map);
+				me.x = 1;
+				me.y = 1;
+				break;
+			}
 		}
 		gotoxy(0, 32);
 	}
-	
-
-
-
-
-
-
-
-
-
-
-
-	// for (int i = 0; i < 256; ++i){
-	// 	printf("%d %c\n", i, i);
-	// }
 	for (int i = 0; i < 64; ++i) {
 		free(*(map + i));
+		free(*(mapCopy + i));
 	}
 	free(map);
+	free(mapCopy);
 	//system("PAUSE>nul");
 	return 0;
 }
